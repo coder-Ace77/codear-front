@@ -5,6 +5,8 @@ import Label from "@/atoms/Label";
 import Select from "@/atoms/Select";
 import Badge from "@/atoms/Badge";
 import { Plus, X } from "lucide-react";
+import apiClient from "@/lib/apiClient";
+import { Textarea } from "@/components/ui/textarea";
 
 const Admin = () => {
   const [formData, setFormData] = useState({
@@ -20,11 +22,55 @@ const Admin = () => {
   const [currentTag, setCurrentTag] = useState("");
   const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("New problem:", { ...formData, tags, testCases });
-    // Reset form
+  // This is your corrected handleSubmit function
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // 1. Create the "sample" test case from the main form
+  const sampleTestCase = {
+    input: formData.exampleInput,
+    output: formData.exampleOutput,
+    isSample: true, 
   };
+
+  const otherTestCases = testCases.map(tc => ({
+    input: tc.input,
+    output: tc.output,
+    isSample: false, 
+  }));
+
+  const payload = {
+    ...formData,    
+    tags: tags,    
+    testCases: [sampleTestCase, ...otherTestCases],
+    timeLimitMs:2000,
+    memoryLimitMb:256
+  };
+  try {
+    console.log("PAYLOAD::"+payload.constraints);
+    console.log("PAYLOAD::"+payload.description);
+    console.log("PAYLOAD::"+payload.difficulty);
+    console.log("PAYLOAD::"+payload.exampleInput);
+    console.log("PAYLOAD::"+payload.exampleOutput);
+    console.log("PAYLOAD::"+payload.tags);
+    console.log("PAYLOAD::"+payload.testCases);
+    console.log("PAYLOAD::"+payload.title);
+    console.log("PAYLOAD::"+payload.timeLimitMs);
+    console.log("PAYLOAD::"+payload.memoryLimitMb);
+
+    const response = await apiClient.post("/addproblem", payload);
+    console.log("Problem added successfully:", response.data);
+    
+    // Optionally: reset form or redirect user
+    // setFormData({});
+    // setTags([]);
+    // setTestCases([{ input: "", output: "" }]);
+
+  } catch (error) {
+    console.error("Failed to add problem:", error);
+    // You should show an error message to the user here
+  }
+};
 
   const addTag = () => {
     if (currentTag.trim() && !tags.includes(currentTag.trim())) {
@@ -135,7 +181,7 @@ const Admin = () => {
                 <textarea
                   id="exampleInput"
                   rows={4}
-                  placeholder="nums = [2,7,11,15], target = 9"
+                  placeholder="1 100 200"
                   value={formData.exampleInput}
                   onChange={(e) => setFormData({ ...formData, exampleInput: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none font-mono text-sm"
@@ -148,7 +194,7 @@ const Admin = () => {
                 <textarea
                   id="exampleOutput"
                   rows={4}
-                  placeholder="[0,1]"
+                  placeholder="2"
                   value={formData.exampleOutput}
                   onChange={(e) => setFormData({ ...formData, exampleOutput: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none font-mono text-sm"
@@ -186,12 +232,12 @@ const Admin = () => {
                   <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg bg-secondary border border-border">
                     <div>
                       <Label htmlFor={`test-input-${index}`}>Input {index + 1}</Label>
-                      <Input
+                      <Textarea
                         id={`test-input-${index}`}
-                        placeholder="[2,7,11,15], 9"
+                        placeholder="5 abc"
                         value={testCase.input}
                         onChange={(e) => updateTestCase(index, "input", e.target.value)}
-                        className="font-mono text-sm"
+                        className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none font-mono text-sm"
                         required
                       />
                     </div>
@@ -208,12 +254,12 @@ const Admin = () => {
                           </button>
                         )}
                       </div>
-                      <Input
+                      <Textarea
                         id={`test-output-${index}`}
-                        placeholder="[0,1]"
+                        placeholder="0"
                         value={testCase.output}
                         onChange={(e) => updateTestCase(index, "output", e.target.value)}
-                        className="font-mono text-sm"
+                        className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none font-mono text-sm"
                         required
                       />
                     </div>

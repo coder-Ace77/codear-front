@@ -18,6 +18,27 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
     return false;
   });
 
+  // This function adds ellipsis where needed
+  const getVisiblePages = () => {
+    if (totalPages <= 7) {
+      return pages;
+    }
+
+    const pagesWithEllipsis: (number | string)[] = [];
+    let lastPage = 0;
+
+    for (const page of visiblePages) {
+      if (lastPage !== 0 && page - lastPage > 1) {
+        pagesWithEllipsis.push('...');
+      }
+      pagesWithEllipsis.push(page);
+      lastPage = page;
+    }
+    return pagesWithEllipsis;
+  }
+
+  const pagesToRender = getVisiblePages();
+
   return (
     <div className="flex items-center justify-center gap-2">
       <Button
@@ -29,44 +50,22 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         <ChevronLeft className="w-4 h-4" />
       </Button>
 
-      {visiblePages[0] !== 1 && (
-        <>
+      {pagesToRender.map((page, index) =>
+        typeof page === 'number' ? (
           <Button
-            variant="outline"
+            key={page}
+            variant={currentPage === page ? "primary" : "outline"}
             size="sm"
-            onClick={() => onPageChange(1)}
+            onClick={() => onPageChange(page)}
+            className={cn(currentPage === page && "pointer-events-none")}
           >
-            1
+            {page}
           </Button>
-          {visiblePages[0] > 2 && <span className="text-muted-foreground">...</span>}
-        </>
-      )}
-
-      {visiblePages.map((page) => (
-        <Button
-          key={page}
-          variant={currentPage === page ? "primary" : "outline"}
-          size="sm"
-          onClick={() => onPageChange(page)}
-          className={cn(currentPage === page && "pointer-events-none")}
-        >
-          {page}
-        </Button>
-      ))}
-
-      {visiblePages[visiblePages.length - 1] !== totalPages && (
-        <>
-          {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-            <span className="text-muted-foreground">...</span>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(totalPages)}
-          >
-            {totalPages}
-          </Button>
-        </>
+        ) : (
+          <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
+            ...
+          </span>
+        )
       )}
 
       <Button

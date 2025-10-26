@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import Badge from "@/atoms/Badge";
-import { Problem } from "@/constants/mockData";
+import { ProblemSummary } from "@/constants/mockData";
 import { TrendingUp } from "lucide-react";
 
 interface ProblemCardProps {
-  problem: Problem;
+  problem: ProblemSummary;
 }
 
 const ProblemCard = ({ problem }: ProblemCardProps) => {
@@ -37,10 +37,6 @@ const ProblemCard = ({ problem }: ProblemCardProps) => {
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <TrendingUp className="w-4 h-4" />
-            <span>{problem.acceptanceRate}% Acceptance</span>
-          </div>
-          <div>
-            <span>{problem.solvedBy.toLocaleString()} solved</span>
           </div>
         </div>
       </div>
