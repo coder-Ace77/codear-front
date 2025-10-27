@@ -1,17 +1,38 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Button from "@/atoms/Button";
 import Input from "@/atoms/Input";
 import Label from "@/atoms/Label";
 import { Code2, Mail, Lock } from "lucide-react";
+import apiClientUser from "@/lib/apiClientUser";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt:", { email, password });
+    try{
+      const response = await apiClientUser.post("/login",
+        {
+        email:email,
+        password:password
+      });
+
+      if(response){
+        const token = response.data.token;
+        localStorage.setItem('token',token);
+        alert("Logged in "+token);
+        navigate("/profile");
+      }else{
+        alert("Login failed");
+      }
+
+    }catch(e:any){
+      alert("Login failed");
+    }
   };
 
   return (
