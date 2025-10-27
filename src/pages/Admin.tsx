@@ -47,25 +47,9 @@ const handleSubmit = async (e: React.FormEvent) => {
     memoryLimitMb:256
   };
   try {
-    console.log("PAYLOAD::"+payload.constraints);
-    console.log("PAYLOAD::"+payload.description);
-    console.log("PAYLOAD::"+payload.difficulty);
-    console.log("PAYLOAD::"+payload.exampleInput);
-    console.log("PAYLOAD::"+payload.exampleOutput);
-    console.log("PAYLOAD::"+payload.tags);
-    console.log("PAYLOAD::"+payload.testCases);
-    console.log("PAYLOAD::"+payload.title);
-    console.log("PAYLOAD::"+payload.timeLimitMs);
-    console.log("PAYLOAD::"+payload.memoryLimitMb);
-
     const response = await apiClient.post("/addproblem", payload);
     console.log("Problem added successfully:", response.data);
-    
-    // Optionally: reset form or redirect user
-    // setFormData({});
-    // setTags([]);
-    // setTestCases([{ input: "", output: "" }]);
-
+  
   } catch (error) {
     console.error("Failed to add problem:", error);
     // You should show an error message to the user here

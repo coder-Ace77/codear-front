@@ -21,7 +21,7 @@ const ExplorePageProblemSection = ({loading,problemsummary,error})=>{
               <ProblemCard key={problem.id} problem={problem} />
             ))
           ) : (
-            <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-lg">
+            <div className="text-center py-12 bg-slate-900 dark:bg-gray-800/20 rounded-lg">
               <p className="text-xl text-muted-foreground">No problems found matching your criteria</p>
             </div>
           )}

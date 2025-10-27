@@ -1,27 +1,72 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Code2, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Button from "@/atoms/Button";
 import { cn } from "@/lib/utils";
+import { User } from "@/types/User";
+import apiClientUser from "@/lib/apiClientUser";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
-  const navLinks = [
+  const baseNavLinks = [
     { path: "/", label: "Home" },
     { path: "/explore", label: "Explore" },
     { path: "/profile", label: "Profile" },
     { path: "/admin", label: "Admin" },
   ];
 
+  // Fetch user on component mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await apiClientUser.get("/user");
+        const data: User = response.data;
+        setUser(data);
+      } catch (e) {
+        if (e.response?.status !== 401 && e.response?.status !== 403) {
+          console.error("Unable to load user", e);
+        }
+      }
+    };
+
+    fetchUser();
+  }, [location.pathname]);
+
+  const navLinks = useMemo(() => {
+    if (!user) {
+      return baseNavLinks.filter(
+        (link) => link.path !== "/admin" && link.path !== "/profile"
+      );
+    }
+    if (!user || user.username !== "Admin") {
+      return baseNavLinks.filter((link) => link.path !== "/admin");
+    }
+    return baseNavLinks;
+  }, [user]);
+
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    delete apiClientUser.defaults.headers.common["Authorization"];
+    setUser(null);
+    navigate("/");
+  };
+
+  const handleLogoutAndCloseMenu = () => {
+    handleLogout();
+    setMobileMenuOpen(false);
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="p-2 rounded-lg bg-gradient-primary group-hover:shadow-glow transition-all duration-300">
               <Code2 className="w-6 h-6 text-white" />
@@ -31,7 +76,6 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
@@ -49,21 +93,32 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button variant="primary" size="sm">
-                Sign Up
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <span className="text-sm font-medium text-muted-foreground">
+                  Hi, {user.name}
+                </span>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button variant="primary" size="sm">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -77,7 +132,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-card">
           <div className="px-4 py-4 space-y-2">
@@ -96,17 +150,36 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+
             <div className="pt-2 space-y-2">
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" size="sm" className="w-full">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="primary" size="sm" className="w-full">
-                  Sign Up
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <div className="px-4 py-2 text-sm font-medium text-muted-foreground">
+                    Hi, {user.name}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full"
+                    onClick={handleLogoutAndCloseMenu}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="primary" size="sm" className="w-full">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

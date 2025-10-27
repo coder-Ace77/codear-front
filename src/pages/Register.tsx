@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "@/atoms/Button";
 import Input from "@/atoms/Input";
 import Label from "@/atoms/Label";
 import { Code2, Mail, Lock, User } from "lucide-react";
+import apiClientUser from "@/lib/apiClientUser";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -14,9 +15,33 @@ const Register = () => {
     confirmPassword: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Register attempt:", formData);
+    try {
+      const res = await apiClientUser.post("/register", {
+        username: formData.username,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (res.status === 200 || res.status === 201) {
+        alert("Registered successfully");
+        navigate("/login");
+      } else {
+        alert("Unexpected response. Please try again.");
+      }
+    } catch (err: any) {
+      if (err.response) {
+        alert(err.response.data?.message || "Error while registering");
+      } else if (err.request) {
+        alert("No response from server. Please check your connection.");
+      } else {
+        alert("Unexpected error: " + err.message);
+      }
+    }
   };
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
