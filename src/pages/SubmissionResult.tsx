@@ -17,11 +17,12 @@ const SubmissionResult = () => {
         console.log("Polling for submission result...");
         const data = await codingService.getSubmissionStatus(submissionId);
 
-        if (data.status !== "PENDING") {
+        if (data.status !== "IN_PROGRESS") {
           clearInterval(pollInterval);
           setOutput(
-            `✅ Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}\nTime: ${data.timeTakenMs}ms\nMemory: ${data.memoryUsed}`
+            `Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}\nTime: ${data.timeTakenMs}ms\nMemory: ${data.memoryUsed}`
           );
+          console.log(`✅ Status: ${data.status}`);
           setIsLoading(false);
         }
       } catch (error) {
