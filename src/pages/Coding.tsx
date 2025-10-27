@@ -15,6 +15,7 @@ const Coding = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [code,setCode] = useState<string | "">("");
+  const [problemId , setProblemId] = useState<Number>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -25,6 +26,14 @@ const Coding = () => {
     id,
     );
   }, [id]);
+
+  console.log(problem)
+
+  useEffect(() => {
+    if (problem) {
+      setProblemId(problem.id);
+    }
+  }, [problem]);
 
   useEffect(()=>{
     console.log("CODE::"+code);
@@ -115,7 +124,7 @@ const Coding = () => {
       </div>
 
       <div className="lg:w-3/5 h-full">
-        <EditorPanel code={code} setCode={setCode}/>
+        <EditorPanel code={code} setCode={setCode} problemId={problemId}/>
       </div>
     </div>
   );

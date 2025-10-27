@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Play, CheckCircle } from "lucide-react";
-import { Editor } from "@monaco-editor/react"; 
+import { Editor } from "@monaco-editor/react";
 import { getButtonClasses } from "@/constants/ButtonVariants";
+import { codingService } from "@/service/codingService";
+import { useNavigate } from "react-router-dom";
 
-const EditorPanel = ({ code, setCode }) => {
-  const [language, setLanguage] = useState("javascript");
-  const [fontSize,setFontSize] = useState(14);
+
+const EditorPanel = ({ code, setCode, problemId }) => {
+  const [language, setLanguage] = useState("python");
+  const [fontSize, setFontSize] = useState(14);
+  const [output, setOutput] = useState("Click 'Run' or 'Submit' to see results...");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const editorLanguage = {
     javascript: "javascript",
@@ -15,10 +21,53 @@ const EditorPanel = ({ code, setCode }) => {
     go: "go",
   }[language];
 
+  // Handle submission
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      setOutput("Submitting code...");
+      console.log("code is submitting..")
+
+      console.log(problemId)
+
+      const { submissionId } = await codingService.submitCode(
+        problemId,
+        code,
+        language
+      );
+
+      console.log(`Submission ID: ${submissionId}\nWaiting for result...`);
+
+      setOutput(`Submission ID: ${submissionId}\nWaiting for result...`);
+
+      navigate(`/submissions/${submissionId}`);
+
+      // Start long polling
+      const pollInterval = setInterval(async () => {
+        console.log("long polling started...");
+        const data = await codingService.getSubmissionStatus(submissionId);
+        if (data.status !== "PENDING") {
+          clearInterval(pollInterval);
+          setOutput(
+            `✅ Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}`
+          );
+
+        }
+      }, 2000); // every 2s
+    } catch (err) {
+      console.error(err);
+      setOutput("❌ Error submitting code. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-card border border-border rounded-xl overflow-hidden">
+      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary">
         <div className="flex items-center gap-3">
+          {/* Language selector */}
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -31,9 +80,12 @@ const EditorPanel = ({ code, setCode }) => {
             <option value="go">Go</option>
           </select>
 
-          <select value={fontSize} onChange={(e)=>setFontSize(Number(e.target.value))}
-            className="w-20 h-9 px-3 rounded-md border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"            
-            >
+          {/* Font size selector */}
+          <select
+            value={fontSize}
+            onChange={(e) => setFontSize(Number(e.target.value))}
+            className="w-20 h-9 px-3 rounded-md border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
             <option value="12">12</option>
             <option value="14">14</option>
             <option value="16">16</option>
@@ -41,19 +93,26 @@ const EditorPanel = ({ code, setCode }) => {
             <option value="20">20</option>
           </select>
         </div>
-        
+
+        {/* Buttons */}
         <div className="flex items-center gap-2">
-          <button className={getButtonClasses("secondary")}>
+          <button className={getButtonClasses("secondary")} disabled>
             <Play className="w-4 h-4 mr-1" />
             Run
           </button>
-          <button className={getButtonClasses("accent")}>
+
+          <button
+            className={getButtonClasses("accent")}
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
             <CheckCircle className="w-4 h-4 mr-1" />
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </div>
 
+      {/* Editor */}
       <div className="flex-1 relative">
         <Editor
           height="100%"
@@ -72,11 +131,12 @@ const EditorPanel = ({ code, setCode }) => {
         />
       </div>
 
+      {/* Output */}
       <div className="h-32 border-t border-border bg-secondary p-4 overflow-y-auto">
         <div className="text-sm font-medium text-muted-foreground mb-2">Output</div>
-        <div className="text-sm font-mono text-foreground">
-          Click "Run" or "Submit" to see results...
-        </div>
+        <pre className="text-sm font-mono text-foreground whitespace-pre-wrap">
+          {output}
+        </pre>
       </div>
     </div>
   );
