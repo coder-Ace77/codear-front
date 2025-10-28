@@ -5,6 +5,7 @@ import Input from "@/atoms/Input";
 import Label from "@/atoms/Label";
 import { Code2, Mail, Lock, User } from "lucide-react";
 import apiClient from "@/lib/apiClient";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -28,18 +29,18 @@ const Register = () => {
       });
 
       if (res.status === 200 || res.status === 201) {
-        alert("Registered successfully");
+        toast.success("Registered successfully");
         navigate("/login");
       } else {
-        alert("Unexpected response. Please try again.");
+        toast.error("Unexpected response. Please try again.");
       }
     } catch (err: any) {
       if (err.response) {
-        alert(err.response.data?.message || "Error while registering");
+        toast.error("Error while registering");
       } else if (err.request) {
-        alert("No response from server. Please check your connection.");
+        toast.error("No response from server. Please check your connection.");
       } else {
-        alert("Unexpected error: " + err.message);
+        toast.error("Unexpected error");
       }
     }
   };
@@ -51,7 +52,6 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-hero">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <Link to="/" className="flex items-center justify-center space-x-2 mb-8 group">
           <div className="p-2 rounded-lg bg-gradient-primary group-hover:shadow-glow transition-all duration-300">
             <Code2 className="w-6 h-6 text-white" />
@@ -61,7 +61,6 @@ const Register = () => {
           </span>
         </Link>
 
-        {/* Register Card */}
         <div className="bg-card border border-border rounded-2xl p-8 shadow-card">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">Create Account</h1>

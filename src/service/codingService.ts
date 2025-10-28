@@ -12,7 +12,7 @@ export const fetchProblem = async (
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<Problem>(`/problem/${id}`);
+        const response = await apiClient.get<Problem>(`/problem/problem/${id}`);
         setProblem(response.data);
       } catch (err) {
         console.error("Failed to fetch problem:", err);

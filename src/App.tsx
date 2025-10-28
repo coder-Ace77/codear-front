@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import SubmissionResult from "./pages/SubmissionResult";
+import ToastProvider from "./components/providers/ToastProvider";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
+        <ToastProvider/>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
