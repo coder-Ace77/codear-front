@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {codingService} from "@/service/codingService";
+import { codingService } from "@/service/codingService";
 
 const SubmissionResult = () => {
   const { submissionId } = useParams();
@@ -10,31 +10,24 @@ const SubmissionResult = () => {
   useEffect(() => {
     if (!submissionId) return;
 
-    console.log("Starting long polling for:", submissionId);
-
-    const pollInterval = setInterval(async () => {
+    const fetchResult = async () => {
       try {
-        console.log("Polling for submission result...");
+        console.log("Fetching submission result once for:", submissionId);
         const data = await codingService.getSubmissionStatus(submissionId);
 
-        if (data.status !== "IN_PROGRESS") {
-          clearInterval(pollInterval);
-          setOutput(
-            `Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}\nTime: ${data.timeTakenMs}ms\nMemory: ${data.memoryUsed}`
-          );
-          console.log(`✅ Status: ${data.status}`);
-          setIsLoading(false);
-        }
+        setOutput(
+          `Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}\nTime: ${data.timeTakenMs}ms\nMemory: ${data.memoryUsed}`
+        );
+        console.log(`✅ Final status received: ${data.status}`);
       } catch (error) {
-        clearInterval(pollInterval);
-        console.error("Error fetching submission result:", error);
+        console.error("❌ Error fetching submission result:", error);
         setOutput("❌ Failed to fetch submission result.");
+      } finally {
         setIsLoading(false);
       }
-    }, 2000); // poll every 2 seconds
+    };
 
-    // cleanup on unmount
-    return () => clearInterval(pollInterval);
+    fetchResult();
   }, [submissionId]);
 
   return (
@@ -45,7 +38,9 @@ const SubmissionResult = () => {
         </h1>
 
         {isLoading ? (
-          <div className="text-muted-foreground text-center">Fetching result...</div>
+          <div className="text-muted-foreground text-center">
+            Fetching result...
+          </div>
         ) : (
           <pre className="bg-secondary p-4 rounded-lg text-sm whitespace-pre-wrap font-mono">
             {output}

@@ -43,17 +43,17 @@ const EditorPanel = ({ code, setCode, problemId }) => {
       navigate(`/submissions/${submissionId}`);
 
       // Start long polling
-      const pollInterval = setInterval(async () => {
-        console.log("long polling started...");
-        const data = await codingService.getSubmissionStatus(submissionId);
-        if (data.status !== "PENDING") {
-          clearInterval(pollInterval);
-          setOutput(
-            `✅ Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}`
-          );
+      // const pollInterval = setInterval(async () => {
+      //   console.log("long polling started...");
+      //   const data = await codingService.getSubmissionStatus(submissionId);
+      //   if (data.status !== "PENDING") {
+      //     clearInterval(pollInterval);
+      //     setOutput(
+      //       `✅ Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}`
+      //     );
 
-        }
-      }, 2000); // every 2s
+      //   }
+      // }, 2000); // every 2s
     } catch (err) {
       console.error(err);
       setOutput("❌ Error submitting code. Please try again.");
