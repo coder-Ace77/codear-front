@@ -6,7 +6,7 @@ import { ProblemSummary } from "@/constants/mockData";
 
 export const fetchGrandTotal = async (setGrandTotalProblems,setAvailableTags) => {
     try {
-        const response = await apiClient("/problemCntAndTags");
+        const response = await apiClient("/problem/problemCntAndTags");
         const data: TagsAndCount = await response.data;
         setGrandTotalProblems(data.count || 0);
         setAvailableTags(data.tags || []);
@@ -40,7 +40,7 @@ export const fetchProblems = async (
         if (sortBy) params.append("sort", sortBy);
         if (selectedTag) params.append("tag", selectedTag);
 
-        const response = await apiClient(`/problems?${params.toString()}`);
+        const response = await apiClient(`/problem/problems?${params.toString()}`);
 
         const data: ProblemSummary[] = await response.data;
 

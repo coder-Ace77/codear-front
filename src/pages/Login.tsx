@@ -4,7 +4,7 @@ import Button from "@/atoms/Button";
 import Input from "@/atoms/Input";
 import Label from "@/atoms/Label";
 import { Code2, Mail, Lock } from "lucide-react";
-import apiClientUser from "@/lib/apiClientUser";
+import apiClient from "@/lib/apiClient";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try{
-      const response = await apiClientUser.post("/login",
+      const response = await apiClient.post("/user/login",
         {
         email:email,
         password:password

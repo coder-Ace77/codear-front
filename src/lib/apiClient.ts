@@ -1,10 +1,9 @@
 import axios from 'axios';
-const PROBLEM_URL = import.meta.env.VITE_API_BASE_PROBLEM || ""
-const USER_URL = import.meta.env.VITE_API_USER || ""
+const URL = import.meta.env.VITE_API_BASE || ""
 
 
 const apiClient = axios.create({
-  baseURL: PROBLEM_URL, 
+  baseURL: URL, 
   headers: {
     'Content-Type': 'application/json',
   },
