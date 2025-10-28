@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Button from "@/atoms/Button";
 import { cn } from "@/lib/utils";
 import { User } from "@/types/User";
-import apiClientUser from "@/lib/apiClientUser";
+import apiClient from "@/lib/apiClient";
 
 const Navbar = () => {
   const location = useLocation();
@@ -23,7 +23,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await apiClientUser.get("/user");
+        const response = await apiClient.get("/user/user");
         const data: User = response.data;
         setUser(data);
       } catch (e) {
@@ -52,8 +52,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-
-    delete apiClientUser.defaults.headers.common["Authorization"];
+    delete apiClient.defaults.headers.common["Authorization"];
     setUser(null);
     navigate("/");
   };

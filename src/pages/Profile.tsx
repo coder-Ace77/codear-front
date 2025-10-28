@@ -1,10 +1,9 @@
 import Badge from "@/atoms/Badge";
 import { mockProblems } from "@/constants/mockData";
 import { Calendar, Award, Flame, TrendingUp, Code2 } from "lucide-react";
-import apiClientUser from "@/lib/apiClientUser";
+import apiClient from "@/lib/apiClient";
 import { useEffect, useState } from "react";
 import { User } from "@/types/User";
-import apiClient from "@/lib/apiClient";
 import { TagsAndCount } from "@/types/TagsAndCount";
 
 const Profile = () => {
@@ -14,7 +13,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await apiClientUser.get("/user");
+        const response = await apiClient.get("/user/user");
         const data: User = response.data;
         setUser(data); 
       } catch (e) {
@@ -28,7 +27,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchTotalProblems = async () => {
       try {
-        const response = await apiClient.get("/problemCntAndTags");
+        const response = await apiClient.get("/problem/problemCntAndTags");
         const data: TagsAndCount = await response.data;
         setTotalProblems(data.count || 0);
       } catch (e) {
