@@ -27,18 +27,18 @@ export const codingService = {
   async submitCode(problemId, code, language) {
     const body = { problemId, code, language, userId: mockUserId };
     console.log(code)
-    const response = await apiClient.post('/submit', body);
-    return response.data; // { submissionId: "..." }
+    const response = await apiClient.post('/problem/submit', body);
+    return response.data; 
   },
 
   async getSubmissionStatus(submissionId) {
-    const response = await apiClient.get(`/submissions/${submissionId}`);
-    return response.data; // contains status, result, etc.
+    const response = await apiClient.get(`/problem/submissions/${submissionId}`);
+    return response.data; 
   },
 
   async runCode(problemId, code, language) {
     const body = { problemId, code, language, userId: mockUserId };
-    const response = await apiClient.post("/run", body);
-    return response.data; // immediate output
+    const response = await apiClient.post("/problem/run", body);
+    return response.data; 
   },
 };

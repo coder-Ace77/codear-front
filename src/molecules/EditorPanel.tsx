@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Play, CheckCircle } from "lucide-react";
 import { Editor } from "@monaco-editor/react";
 import { getButtonClasses } from "@/constants/ButtonVariants";
@@ -12,6 +12,20 @@ const EditorPanel = ({ code, setCode, problemId }) => {
   const [output, setOutput] = useState("Click 'Run' or 'Submit' to see results...");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(typeof code==='string' && code.length>0){
+      localStorage.setItem("p"+problemId,code);
+    }
+  },[code,problemId]);
+
+  useEffect(()=>{
+    const savedCode = localStorage.getItem("p"+problemId);
+    if(savedCode && savedCode!==code){
+      setCode(savedCode);
+    }
+  },[problemId,setCode]);
+
 
   const editorLanguage = {
     javascript: "javascript",
@@ -42,7 +56,6 @@ const EditorPanel = ({ code, setCode, problemId }) => {
 
       navigate(`/submissions/${submissionId}`);
 
-      // Start long polling
       const pollInterval = setInterval(async () => {
         console.log("long polling started...");
         const data = await codingService.getSubmissionStatus(submissionId);
@@ -53,7 +66,7 @@ const EditorPanel = ({ code, setCode, problemId }) => {
           );
 
         }
-      }, 2000); // every 2s
+      }, 2000); 
     } catch (err) {
       console.error(err);
       setOutput("❌ Error submitting code. Please try again.");
