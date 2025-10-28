@@ -65,9 +65,8 @@ const EditorPanel = ({ code, setCode, problemId }) => {
           setOutput(
             `✅ Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}`
           );
-
         }
-      }, 2000); 
+      }, 100); 
     } catch (err) {
       console.error(err);
       setOutput("❌ Error submitting code. Please try again.");
