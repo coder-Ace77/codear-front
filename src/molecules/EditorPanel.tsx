@@ -4,6 +4,7 @@ import { Editor } from "@monaco-editor/react";
 import { getButtonClasses } from "@/constants/ButtonVariants";
 import { codingService } from "@/service/codingService";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 const EditorPanel = ({ code, setCode, problemId }) => {
@@ -35,9 +36,9 @@ const EditorPanel = ({ code, setCode, problemId }) => {
     go: "go",
   }[language];
 
-  // Handle submission
   const handleSubmit = async () => {
     try {
+      toast.success("Code submitted successsfully");
       setIsSubmitting(true);
       setOutput("Submitting code...");
       console.log("code is submitting..")
@@ -70,6 +71,7 @@ const EditorPanel = ({ code, setCode, problemId }) => {
     } catch (err) {
       console.error(err);
       setOutput("❌ Error submitting code. Please try again.");
+      toast.error("Error submitting code. Please try again");
     } finally {
       setIsSubmitting(false);
     }
