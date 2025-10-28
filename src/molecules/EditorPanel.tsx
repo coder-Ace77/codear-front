@@ -37,13 +37,15 @@ const EditorPanel = ({ code, setCode, problemId }) => {
   }[language];
 
   const handleSubmit = async () => {
+    
     try {
-      toast.success("Code submitted successsfully");
+
+      toast.success("Code submitted successfully");
       setIsSubmitting(true);
       setOutput("Submitting code...");
-      console.log("code is submitting..")
+      console.log("code is submitting..");
 
-      console.log(problemId)
+      console.log(problemId);
 
       const { submissionId } = await codingService.submitCode(
         problemId,
@@ -51,37 +53,25 @@ const EditorPanel = ({ code, setCode, problemId }) => {
         language
       );
 
-      console.log(`Submission ID: ${submissionId}\nWaiting for result...`);
-
+      console.log(`Submission ID: ${submissionId}`);
       setOutput(`Submission ID: ${submissionId}\nWaiting for result...`);
 
       navigate(`/submissions/${submissionId}`);
 
-      const pollInterval = setInterval(async () => {
-        console.log("long polling started...");
-        const data = await codingService.getSubmissionStatus(submissionId);
-        if (data.status !== "PENDING") {
-          clearInterval(pollInterval);
-          setOutput(
-            `✅ Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}`
-          );
-        }
-      }, 100); 
     } catch (err) {
+
       console.error(err);
       setOutput("❌ Error submitting code. Please try again.");
       toast.error("Error submitting code. Please try again");
-    } finally {
-      setIsSubmitting(false);
-    }
+      setIsSubmitting(false); 
+
+    } 
   };
 
   return (
     <div className="h-full flex flex-col bg-card border border-border rounded-xl overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary">
         <div className="flex items-center gap-3">
-          {/* Language selector */}
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -94,7 +84,6 @@ const EditorPanel = ({ code, setCode, problemId }) => {
             <option value="go">Go</option>
           </select>
 
-          {/* Font size selector */}
           <select
             value={fontSize}
             onChange={(e) => setFontSize(Number(e.target.value))}
@@ -108,7 +97,6 @@ const EditorPanel = ({ code, setCode, problemId }) => {
           </select>
         </div>
 
-        {/* Buttons */}
         <div className="flex items-center gap-2">
           <button className={getButtonClasses("secondary")} disabled>
             <Play className="w-4 h-4 mr-1" />
@@ -126,7 +114,6 @@ const EditorPanel = ({ code, setCode, problemId }) => {
         </div>
       </div>
 
-      {/* Editor */}
       <div className="flex-1 relative">
         <Editor
           height="100%"
@@ -145,7 +132,6 @@ const EditorPanel = ({ code, setCode, problemId }) => {
         />
       </div>
 
-      {/* Output */}
       <div className="h-32 border-t border-border bg-secondary p-4 overflow-y-auto">
         <div className="text-sm font-medium text-muted-foreground mb-2">Output</div>
         <pre className="text-sm font-mono text-foreground whitespace-pre-wrap">
