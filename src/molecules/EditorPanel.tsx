@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { Play, CheckCircle } from "lucide-react";
 import { Editor } from "@monaco-editor/react";
 import { getButtonClasses } from "@/constants/ButtonVariants";
@@ -10,9 +10,15 @@ import toast from "react-hot-toast";
 const EditorPanel = ({ code, setCode, problemId }) => {
   const [language, setLanguage] = useState("python");
   const [fontSize, setFontSize] = useState(14);
-  const [output, setOutput] = useState("Click 'Run' or 'Submit' to see results...");
+  const [output, setOutput] = useState("");
+  const [testInput, setTestInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  const [isRunningTest,setIsRunningTest] = useState(false);
+
+  const intervalRef = useRef(null);
+  
 
   useEffect(()=>{
     if(typeof code==='string' && code.length>0){
@@ -37,36 +43,55 @@ const EditorPanel = ({ code, setCode, problemId }) => {
   }[language];
 
   const handleSubmit = async () => {
-    
     try {
-
-      toast.success("Code submitted successfully");
       setIsSubmitting(true);
-      setOutput("Submitting code...");
-      console.log("code is submitting..");
-
-      console.log(problemId);
-
       const { submissionId } = await codingService.submitCode(
         problemId,
         code,
         language
       );
-
-      console.log(`Submission ID: ${submissionId}`);
-      setOutput(`Submission ID: ${submissionId}\nWaiting for result...`);
-
       navigate(`/submissions/${submissionId}`);
-
     } catch (err) {
 
       console.error(err);
-      setOutput("❌ Error submitting code. Please try again.");
       toast.error("Error submitting code. Please try again");
       setIsSubmitting(false); 
 
     } 
   };
+
+  const handleTestCase = async ()=>{
+    try {
+      const toastId = toast.loading("Testing code");
+      setIsRunningTest(true);
+
+      const {submissionId} = await codingService.runCode(problemId,code,language,testInput);
+      console.log(`Submission ID: ${submissionId}`);
+
+      const fetchStatus = async () => {
+        try {
+          const data = await codingService.getRunStatus(submissionId);
+          if (data.status==="COMPLETED"){
+            toast.success("Test run completed", {id:toastId});
+            clearInterval(intervalRef.current); 
+            setOutput(data.output);
+            setIsRunningTest(false);
+          }
+        } catch (error) {
+          clearInterval(intervalRef.current);
+          toast.error("Error Running tests",{id:toastId});
+        }
+      };
+      fetchStatus();
+      intervalRef.current = setInterval(fetchStatus, 300); 
+      setIsRunningTest(false);
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Error submitting code. Please try again");
+      setIsSubmitting(false); 
+    }
+  }
 
   return (
     <div className="h-full flex flex-col bg-card border border-border rounded-xl overflow-hidden">
@@ -98,7 +123,7 @@ const EditorPanel = ({ code, setCode, problemId }) => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className={getButtonClasses("secondary")} disabled>
+          <button className={getButtonClasses("secondary")} onClick={handleTestCase} disabled={isRunningTest}>
             <Play className="w-4 h-4 mr-1" />
             Run
           </button>
@@ -132,12 +157,27 @@ const EditorPanel = ({ code, setCode, problemId }) => {
         />
       </div>
 
-      <div className="h-32 border-t border-border bg-secondary p-4 overflow-y-auto">
-        <div className="text-sm font-medium text-muted-foreground mb-2">Output</div>
-        <pre className="text-sm font-mono text-foreground whitespace-pre-wrap">
-          {output}
-        </pre>
+      <div className="flex gap-4">
+        <div className="flex-1 h-32 border-t border-border bg-secondary p-4 overflow-y-hidden rounded-md">
+          <textarea
+            onChange={(e) => setTestInput(e.target.value)}
+            value={testInput}
+            placeholder="INPUT"
+            className="w-full h-full resize-none bg-background text-foreground text-sm p-2 rounded-md outline-none"
+          />
+        </div>
+
+        <div className="flex-1 h-32 border-t border-border bg-secondary p-4 overflow-y-hidden rounded-md">
+          <textarea
+            value={output}
+            placeholder="OUTPUT"
+            disabled
+            className="w-full h-full resize-none bg-background text-foreground text-sm p-2 rounded-md outline-none"
+          />
+        </div>
+        
       </div>
+
     </div>
   );
 };

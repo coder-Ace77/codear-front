@@ -14,32 +14,35 @@ const SubmissionResult = () => {
 
   useEffect(() => {
     if (!submissionId) return;
-
-
+    const toastId = toast.loading("Running code");
     const fetchStatus = async () => {
       try {
         const data = await codingService.getSubmissionStatus(submissionId);
-        if (FINAL_STATES.includes(data.status.toUpperCase())) {
-          
-          clearInterval(intervalRef.current); // Stop the interval
-          
+        if (FINAL_STATES.includes(data.status.toUpperCase())){
+          clearInterval(intervalRef.current);
           setOutput(
             `Status: ${data.status}\nResult: ${data.result}\nPassed: ${data.passedTests}/${data.totalTests}\nTime: ${data.timeTakenMs}ms\nMemory: ${data.memoryUsed}`
           );
+          if(data.status=="PASSED"){
+            toast.success("All test passed",{id:toastId});
+          }else{
+            toast.error("Error running tests",{id:toastId});
+          }
           setIsLoading(false);
         } else {          
           setOutput(`⏳ Status: ${data.status}... still processing...`);
           setIsLoading(true); 
-        
+          toast.loading("Running code",{id:toastId});
         }
       } catch (error) {
         clearInterval(intervalRef.current);
         setOutput("❌ Failed to fetch submission result.");
         setIsLoading(false);
+        toast.error("Failed to get result",{id:toastId});
       }
     };
     fetchStatus();
-    intervalRef.current = setInterval(fetchStatus, 100); 
+    intervalRef.current = setInterval(fetchStatus, 1000); 
     return () => clearInterval(intervalRef.current);
   }, [submissionId]); 
 

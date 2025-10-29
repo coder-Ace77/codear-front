@@ -25,7 +25,7 @@ export const fetchProblem = async (
 
 export const codingService = {
   async submitCode(problemId, code, language) {
-    const body = { problemId, code, language, userId: mockUserId };
+    const body = { problemId, code, language, userId:1};
     console.log(code)
     const response = await apiClient.post('/problem/submit', body);
     return response.data; 
@@ -36,9 +36,14 @@ export const codingService = {
     return response.data; 
   },
 
-  async runCode(problemId, code, language) {
-    const body = { problemId, code, language, userId: mockUserId };
-    const response = await apiClient.post("/problem/run", body);
+  async getRunStatus(submissionId) {
+    const response = await apiClient.get(`/problem/submissions/test/${submissionId}`);
+    return response.data; 
+  },
+
+  async runCode(problemId, code, language,input){
+    const body = { problemId, code, language, userId:1,input};
+    const response = await apiClient.post("/problem/test", body);
     return response.data; 
   },
 };
