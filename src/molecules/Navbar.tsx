@@ -5,6 +5,7 @@ import Button from "@/atoms/Button";
 import { cn } from "@/lib/utils";
 import { User } from "@/types/User";
 import apiClient from "@/lib/apiClient";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const location = useLocation();
@@ -18,8 +19,6 @@ const Navbar = () => {
     { path: "/profile", label: "Profile" },
     { path: "/admin", label: "Admin" },
   ];
-
-  // Fetch user on component mount
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -54,6 +53,7 @@ const Navbar = () => {
     localStorage.removeItem("token");
     delete apiClient.defaults.headers.common["Authorization"];
     setUser(null);
+    toast.success("Logged out successfully")
     navigate("/");
   };
 

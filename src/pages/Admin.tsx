@@ -7,6 +7,7 @@ import Badge from "@/atoms/Badge";
 import { Plus, X } from "lucide-react";
 import apiClient from "@/lib/apiClient";
 import { Textarea } from "@/components/ui/textarea";
+import toast from "react-hot-toast";
 
 const Admin = () => {
   const [formData, setFormData] = useState({
@@ -47,11 +48,24 @@ const handleSubmit = async (e: React.FormEvent) => {
     memoryLimitMb:256
   };
   try {
-    const response = await apiClient.post("/addproblem", payload);
+    const response = await apiClient.post("/problem/addproblem", payload);
     console.log("Problem added successfully:", response.data);
+    toast.success("Problem added successfully");
+
+    setFormData({
+    title: "",
+    difficulty: "Easy",
+    description: "",
+    constraints: "",
+    exampleInput: "",
+    exampleOutput: "",
+    });
+    setTestCases([{ input: "", output: "" }]);
+
   
   } catch (error) {
     console.error("Failed to add problem:", error);
+    toast.error("Failed to add problem");
     // You should show an error message to the user here
   }
 };

@@ -12,7 +12,7 @@ export const fetchProblem = async (
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<Problem>(`/problem/${id}`);
+        const response = await apiClient.get<Problem>(`/problem/problem/${id}`);
         setProblem(response.data);
       } catch (err) {
         console.error("Failed to fetch problem:", err);
@@ -25,20 +25,25 @@ export const fetchProblem = async (
 
 export const codingService = {
   async submitCode(problemId, code, language) {
-    const body = { problemId, code, language, userId: mockUserId };
+    const body = { problemId, code, language, userId:1};
     console.log(code)
-    const response = await apiClient.post('/submit', body);
-    return response.data; // { submissionId: "..." }
+    const response = await apiClient.post('/problem/submit', body);
+    return response.data; 
   },
 
   async getSubmissionStatus(submissionId) {
-    const response = await apiClient.get(`/submissions/${submissionId}`);
-    return response.data; // contains status, result, etc.
+    const response = await apiClient.get(`/problem/submissions/${submissionId}`);
+    return response.data; 
   },
 
-  async runCode(problemId, code, language) {
-    const body = { problemId, code, language, userId: mockUserId };
-    const response = await apiClient.post("/run", body);
-    return response.data; // immediate output
+  async getRunStatus(submissionId) {
+    const response = await apiClient.get(`/problem/submissions/test/${submissionId}`);
+    return response.data; 
+  },
+
+  async runCode(problemId, code, language,input){
+    const body = { problemId, code, language, userId:1,input};
+    const response = await apiClient.post("/problem/test", body);
+    return response.data; 
   },
 };
