@@ -15,15 +15,12 @@ const SubmissionResult = () => {
   useEffect(() => {
     if (!submissionId) return;
 
-    toast.success("Starting polling for:"+submissionId);
 
     const fetchStatus = async () => {
       try {
-        toast.success("Polling for submission result...");
         const data = await codingService.getSubmissionStatus(submissionId);
         if (FINAL_STATES.includes(data.status.toUpperCase())) {
           
-          toast.success(`✅ Status: ${data.status}. Polling stopped.`);
           clearInterval(intervalRef.current); // Stop the interval
           
           setOutput(
@@ -37,7 +34,6 @@ const SubmissionResult = () => {
         }
       } catch (error) {
         clearInterval(intervalRef.current);
-        toast.error("Error fetching submission result:",error);
         setOutput("❌ Failed to fetch submission result.");
         setIsLoading(false);
       }
