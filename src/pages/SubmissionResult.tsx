@@ -37,6 +37,7 @@ const SubmissionResult = () => {
       } catch (error) {
         clearInterval(intervalRef.current);
         setOutput("❌ Failed to fetch submission result.");
+      } finally {
         setIsLoading(false);
         toast.error("Failed to get result",{id:toastId});
       }

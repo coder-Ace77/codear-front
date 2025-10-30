@@ -4,10 +4,45 @@ import Input from "@/atoms/Input";
 import Label from "@/atoms/Label";
 import Select from "@/atoms/Select";
 import Badge from "@/atoms/Badge";
-import { Plus, X } from "lucide-react";
+import { Check, ChevronsUpDown, Command, Plus, Tag, X } from "lucide-react";
 import apiClient from "@/lib/apiClient";
 import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
+import { CommandEmpty, CommandInput, CommandItem, CommandList } from "cmdk";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import TagsSelector from "@/components/ui/Problemtags";
+
+
+const DSA_TAGS = [
+  "Array",
+  "String",
+  "Hash Table",
+  "Dynamic Programming",
+  "Tree",
+  "Graph",
+  "Linked List",
+  "Stack",
+  "Queue",
+  "Binary Search",
+  "Recursion",
+  "Two Pointers",
+  "Sliding Window",
+  "Greedy",
+  "Backtracking",
+  "Heap / Priority Queue",
+  "Math",
+  "Bit Manipulation",
+  "Prefix Sum",
+  "Sorting",
+  "Depth First Search",
+  "Breadth First Search",
+  "Union Find",
+  "Trie",
+  "Matrix",
+];
+
+
 
 const Admin = () => {
   const [formData, setFormData] = useState({
@@ -131,31 +166,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="tags">Tags</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="tags"
-                    placeholder="Array, Hash Table"
-                    value={currentTag}
-                    onChange={(e) => setCurrentTag(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  />
-                  <Button type="button" variant="secondary" onClick={addTag}>
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {tags.map((tag) => (
-                      <Badge key={tag} variant="default" className="cursor-pointer" onClick={() => removeTag(tag)}>
-                        {tag}
-                        <X className="w-3 h-3 ml-1" />
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <TagsSelector tags={tags} setTags={setTags}></TagsSelector>
             </div>
 
             {/* Description */}
