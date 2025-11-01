@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Pagination from "@/molecules/Pagination";
-import { Problem, ProblemSummary } from "@/constants/mockData";
+import { ProblemSummary } from "@/constants/mockData";
 import { fetchGrandTotal ,fetchProblems } from "@/service/problemService";
 import ExplorePageHeader from "@/molecules/ExplorePageHeader";
 import ExplorePageMenuSection from "@/molecules/ExplorePageMenuSectiob";

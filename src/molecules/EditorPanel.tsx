@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
-const EditorPanel = ({ code, setCode, problemId }) => {
+const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) => {
   const [language, setLanguage] = useState("python");
   const [fontSize, setFontSize] = useState(14);
   const [output, setOutput] = useState("");
@@ -22,16 +22,16 @@ const EditorPanel = ({ code, setCode, problemId }) => {
 
   useEffect(()=>{
     if(typeof code==='string' && code.length>0){
-      localStorage.setItem("p"+problemId,code);
+      localStorage.setItem("p"+problemId+" "+language,code);
     }
-  },[code,problemId]);
+  },[code,problemId,language]);
 
   useEffect(()=>{
-    const savedCode = localStorage.getItem("p"+problemId);
+    const savedCode = localStorage.getItem("p"+problemId+" "+language);
     if(savedCode && savedCode!==code){
       setCode(savedCode);
     }
-  },[problemId,setCode]);
+  },[problemId,setCode,language]);
 
 
   const editorLanguage = {
@@ -50,7 +50,9 @@ const EditorPanel = ({ code, setCode, problemId }) => {
         code,
         language
       );
-      navigate(`/submissions/${submissionId}`);
+      setSubmissionId(submissionId);
+      setAcitveTab('submissions');
+      setIsSubmitting(false);
     } catch (err) {
 
       console.error(err);
@@ -66,7 +68,6 @@ const EditorPanel = ({ code, setCode, problemId }) => {
       setIsRunningTest(true);
 
       const {submissionId} = await codingService.runCode(problemId,code,language,testInput);
-      console.log(`Submission ID: ${submissionId}`);
 
       const fetchStatus = async () => {
         try {

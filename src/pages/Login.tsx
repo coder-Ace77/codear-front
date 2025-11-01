@@ -24,12 +24,10 @@ const Login = () => {
         password: password,
       });
 
-      // Check for a successful response with a token
       if (response && response.data && response.data.token) {
         const token = response.data.token;
         localStorage.setItem("token", token);
         
-        // 2. Use a success toast
         toast.success("Logged in successfully!"); 
         
         navigate("/profile");

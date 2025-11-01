@@ -3,46 +3,12 @@ import Button from "@/atoms/Button";
 import Input from "@/atoms/Input";
 import Label from "@/atoms/Label";
 import Select from "@/atoms/Select";
-import Badge from "@/atoms/Badge";
-import { Check, ChevronsUpDown, Command, Plus, Tag, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import apiClient from "@/lib/apiClient";
 import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
-import { CommandEmpty, CommandInput, CommandItem, CommandList } from "cmdk";
-import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import TagsSelector from "@/components/ui/Problemtags";
-
-
-const DSA_TAGS = [
-  "Array",
-  "String",
-  "Hash Table",
-  "Dynamic Programming",
-  "Tree",
-  "Graph",
-  "Linked List",
-  "Stack",
-  "Queue",
-  "Binary Search",
-  "Recursion",
-  "Two Pointers",
-  "Sliding Window",
-  "Greedy",
-  "Backtracking",
-  "Heap / Priority Queue",
-  "Math",
-  "Bit Manipulation",
-  "Prefix Sum",
-  "Sorting",
-  "Depth First Search",
-  "Breadth First Search",
-  "Union Find",
-  "Trie",
-  "Matrix",
-];
-
-
+import { DSA_TAGS } from "@/constants/dsatags";
 
 const Admin = () => {
   const [formData, setFormData] = useState({
@@ -58,11 +24,8 @@ const Admin = () => {
   const [currentTag, setCurrentTag] = useState("");
   const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
 
-  // This is your corrected handleSubmit function
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-
-  // 1. Create the "sample" test case from the main form
   const sampleTestCase = {
     input: formData.exampleInput,
     output: formData.exampleOutput,
@@ -101,7 +64,6 @@ const handleSubmit = async (e: React.FormEvent) => {
   } catch (error) {
     console.error("Failed to add problem:", error);
     toast.error("Failed to add problem");
-    // You should show an error message to the user here
   }
 };
 
@@ -169,7 +131,6 @@ const handleSubmit = async (e: React.FormEvent) => {
               <TagsSelector tags={tags} setTags={setTags}></TagsSelector>
             </div>
 
-            {/* Description */}
             <div>
               <Label htmlFor="description">Problem Description</Label>
               <textarea
@@ -277,7 +238,6 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
             </div>
 
-            {/* Submit */}
             <div className="flex gap-4 pt-4">
               <Button type="submit" variant="primary" size="lg" className="flex-1">
                 Create Problem
