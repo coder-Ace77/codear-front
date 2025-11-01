@@ -51,6 +51,10 @@ const Explore = () => {
     return () => clearTimeout(handler); // cleanup on every dependency change
   }, [currentPage, searchQuery, selectedDifficulty, sortBy, selectedTag]);
 
+  useEffect(() => {
+    const result = fetchGrandTotal(setGrandTotalProblems , setAvailableTags);
+  } , [])
+
   
   // Reset page to 1 whenever filter/search changes
   useEffect(() => {
