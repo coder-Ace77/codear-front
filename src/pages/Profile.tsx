@@ -1,5 +1,5 @@
 import Badge from "@/atoms/Badge";
-import { Award, Flame, TrendingUp, Code2 } from "lucide-react"; // Removed 'Calendar' as it wasn't used
+import { Award, Flame, TrendingUp, Code2, Link } from "lucide-react"; // Removed 'Calendar' as it wasn't used
 import apiClient from "@/lib/apiClient";
 import { useEffect, useState } from "react";
 import { User } from "@/types/User";
@@ -55,7 +55,6 @@ const Profile = () => {
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        {/* You could add a spinner here for a nicer loading state */}
         <p className="text-lg animate-pulse">Loading profile...</p>
       </div>
     );
@@ -65,10 +64,8 @@ const Profile = () => {
     totalProblem > 0 ? (user.problemSolvedTotal / totalProblem) * 100 : 0;
 
   return (
-    // 1. Added bg-background for a consistent page color
     <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* User profile card - no change */}
         <div className="bg-card border border-border rounded-xl p-8 mb-6 shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-gradient-primary flex items-center justify-center text-3xl font-bold text-white shadow-glow flex-shrink-0">
@@ -100,9 +97,7 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* 2. Removed the grid layout and centered the main content column */}
         <div className="max-w-7xl mx-auto space-y-6">
-          {/* Problems Solved card */}
           <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
@@ -126,7 +121,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* 3. Fixed grid from grid-cols-2 to grid-cols-3 */}
             <div className="grid grid-cols-3 gap-4">
               <div className="p-4 rounded-lg bg-success/10 border border-success/20">
                 <div className="text-2xl font-bold text-success mb-1">
@@ -149,7 +143,6 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Recently Solved card */}
           <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Code2 className="w-5 h-5 text-primary" />
@@ -164,33 +157,29 @@ const Profile = () => {
                     | "medium"
                     | "hard";
                   return (
-                    <div
-                      key={problem.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="text-sm font-mono text-muted-foreground">
-                          #{problem.id}
+                      <div
+                        key={problem.id}
+                        className="flex items-center justify-between p-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="text-sm font-mono text-muted-foreground">
+                            #{problem.id}
+                          </div>
+                          <span className="font-medium truncate"><a href={"/coding/"+problem.id}>{problem.title}</a></span>
                         </div>
-                        <span className="font-medium">{problem.title}</span>
+                        <Badge variant={difficultyVariant} className="flex-shrink-0">
+                          {problem.difficulty}
+                        </Badge>
                       </div>
-                      <Badge variant={difficultyVariant}>
-                        {problem.difficulty}
-                      </Badge>
-                    </div>
                   );
                 })
               ) : (
-                // 4. Centered the "no submissions" text
                 <p className="text-muted-foreground text-sm text-center py-4">
                   No recent submissions found.
                 </p>
               )}
             </div>
           </div>
-
-          {/* 5. Removed the entire sidebar (Top Skills & Achievements)
-               as it was hardcoded and cluttered the view. */}
         </div>
       </div>
     </div>
