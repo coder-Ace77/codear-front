@@ -1,7 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import { Problem } from "@/types/problem";
 
-const mockUserId = 123;
 
 export const fetchProblem = async (
     setLoading,

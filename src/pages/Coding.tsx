@@ -8,6 +8,7 @@ import CodingLoading from "@/atoms/CodifingLoading";
 import CodingError from "@/atoms/CodingError";
 import CodingProblemNotFound from "@/atoms/CodingProblemNotFound";
 import type { Tab } from "@/types/Tabs";
+import AssistantSidebar from "@/components/ui/AssistantSidebar";
 
 const Coding = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,23 +44,31 @@ const Coding = () => {
   if (!problem){return <CodingProblemNotFound />;}
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-4 p-4">
+    <div className="relative flex w-full h-[calc(100vh-4rem)]"> {/* Add relative and full width */}
       
-      <ProblemPanel 
-        problem={problem}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        submissionId={submissionId}
+      {/* 2. Add the Sidebar */}
+      <AssistantSidebar 
+        problemStatement={problem.description} // or whatever field holds the text
+        code={code} 
       />
 
-      <div className="lg:w-3/5 h-full">
-        <EditorPanel 
-          code={code}
-          setCode={setCode} 
-          problemId={problemId} 
-          setAcitveTab={setActiveTab} 
-          setSubmissionId={setSubmissionId}
+      <div className="h-full w-full flex flex-col lg:flex-row gap-4 p-4 transition-all">
+        <ProblemPanel 
+          problem={problem}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          submissionId={submissionId}
         />
+
+        <div className="lg:w-3/5 h-full">
+          <EditorPanel 
+            code={code}
+            setCode={setCode} 
+            problemId={problemId} 
+            setAcitveTab={setActiveTab} 
+            setSubmissionId={setSubmissionId}
+          />
+        </div>
       </div>
     </div>
   );
