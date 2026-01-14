@@ -84,7 +84,7 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
         }
       };
       fetchStatus();
-      intervalRef.current = setInterval(fetchStatus, 300); 
+      intervalRef.current = setInterval(fetchStatus,3000); 
       setIsRunningTest(false);
 
     } catch (err) {
