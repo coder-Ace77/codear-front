@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Problem } from "@/types/problem";
-import ProblemDescription from "./ProblemDescription"; // Adjust path if needed
-import type { Tab } from "@/types/Tabs";
-import SubmissionsContent from "./SubmissionContent";
+import EditorialTab from "./EditorialTab";
+import { Tab } from "@/types/Tabs";
+import ProblemDescription from "./ProblemDescription";
+import { SubmissionsContent } from "./SubmissionContent";
 
 const EditorialContent = () => (
   <div className="p-6">
@@ -11,23 +12,22 @@ const EditorialContent = () => (
   </div>
 );
 
-
 interface ProblemPanelProps {
   problem: Problem;
-  activeTab:Tab;
-  setActiveTab:React.Dispatch<React.SetStateAction<Tab>>;
-  submissionId:String;
+  activeTab: Tab;
+  setActiveTab: React.Dispatch<React.SetStateAction<Tab>>;
+  submissionId: string | null;
 }
-const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem,activeTab,setActiveTab,submissionId}) => {
+const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem, activeTab, setActiveTab, submissionId }) => {
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "problem":
         return <ProblemDescription problem={problem} />;
       case "submissions":
-        return <SubmissionsContent problemId={problem.id}/>;
+        return <SubmissionsContent problemId={problem.id} />;
       case "editorial":
-        return <EditorialContent />;
+        return <EditorialTab problemId={problem.id} />;
       default:
         return null;
     }
@@ -49,7 +49,7 @@ const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem,activeTab,setActive
 
   return (
     <div className="lg:w-2/5 flex flex-col h-full overflow-hidden bg-card border border-border rounded-xl">
-      
+
       <div className="flex border-b border-border px-2">
         <TabButton tabId="problem" label="Problem" />
         <TabButton tabId="submissions" label="Submissions" />

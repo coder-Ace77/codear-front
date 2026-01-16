@@ -8,13 +8,14 @@ interface ProblemDescriptionProps {
 
 const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem }) => {
   const difficultyVariant = problem.difficulty.toLowerCase() as "easy" | "medium" | "hard";
-  const sampleTestCase = problem.testCases?.find(tc => tc.isSample);
+  // Find explicitly marked sample, or fallback to the first one
+  const sampleTestCase = problem.testCases?.find(tc => tc.isSample) || problem.testCases?.[0];
   const constraintItems = problem.constraints
     ? problem.constraints.split('\n').filter(line => line.trim() !== '')
     : [];
 
   return (
-    <div className="p-6"> 
+    <div className="p-6">
       <div className="flex items-center gap-2 mb-4">
         <h1 className="text-2xl font-bold">
           {problem.id}. {problem.title}
@@ -50,7 +51,7 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem }) => {
                 <div className="text-muted-foreground font-sans font-semibold">Output:</div>
                 <pre className="text-foreground whitespace-pre-wrap mt-1">{sampleTestCase.output}</pre>
               </div>
-              
+
               {problem.inputDescription && (
                 <div className="font-sans pt-2">
                   <p className="text-muted-foreground">{problem.inputDescription}</p>

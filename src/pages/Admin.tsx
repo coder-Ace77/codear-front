@@ -18,54 +18,58 @@ const Admin = () => {
     constraints: "",
     exampleInput: "",
     exampleOutput: "",
+    timeLimitMs: 1000,
+    memoryLimitMb: 256,
   });
 
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const sampleTestCase = {
-    input: formData.exampleInput,
-    output: formData.exampleOutput,
-    isSample: true, 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const sampleTestCase = {
+      input: formData.exampleInput,
+      output: formData.exampleOutput,
+      isSample: true,
+    };
+
+    const otherTestCases = testCases.map(tc => ({
+      input: tc.input,
+      output: tc.output,
+      isSample: false,
+    }));
+
+    const payload = {
+      ...formData,
+      tags: tags,
+      testCases: [sampleTestCase, ...otherTestCases],
+      timeLimitMs: formData.timeLimitMs,
+      memoryLimitMb: formData.memoryLimitMb
+    };
+    try {
+      const response = await apiClient.post("/problem/addproblem", payload);
+      console.log("Problem added successfully:", response.data);
+      toast.success("Problem added successfully");
+
+      setFormData({
+        title: "",
+        difficulty: "Easy",
+        description: "",
+        constraints: "",
+        exampleInput: "",
+        exampleOutput: "",
+        timeLimitMs: 1000,
+        memoryLimitMb: 256,
+      });
+      setTestCases([{ input: "", output: "" }]);
+
+
+    } catch (error) {
+      console.error("Failed to add problem:", error);
+      toast.error("Failed to add problem");
+    }
   };
-
-  const otherTestCases = testCases.map(tc => ({
-    input: tc.input,
-    output: tc.output,
-    isSample: false, 
-  }));
-
-  const payload = {
-    ...formData,    
-    tags: tags,    
-    testCases: [sampleTestCase, ...otherTestCases],
-    timeLimitMs:2000,
-    memoryLimitMb:256
-  };
-  try {
-    const response = await apiClient.post("/problem/addproblem", payload);
-    console.log("Problem added successfully:", response.data);
-    toast.success("Problem added successfully");
-
-    setFormData({
-    title: "",
-    difficulty: "Easy",
-    description: "",
-    constraints: "",
-    exampleInput: "",
-    exampleOutput: "",
-    });
-    setTestCases([{ input: "", output: "" }]);
-
-  
-  } catch (error) {
-    console.error("Failed to add problem:", error);
-    toast.error("Failed to add problem");
-  }
-};
 
   const addTag = () => {
     if (currentTag.trim() && !tags.includes(currentTag.trim())) {
@@ -173,18 +177,31 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
             </div>
 
-            {/* Constraints */}
-            <div>
-              <Label htmlFor="constraints">Constraints</Label>
-              <textarea
-                id="constraints"
-                rows={4}
-                placeholder="2 ≤ nums.length ≤ 10⁴&#10;-10⁹ ≤ nums[i] ≤ 10⁹"
-                value={formData.constraints}
-                onChange={(e) => setFormData({ ...formData, constraints: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none font-mono text-sm"
-                required
-              />
+
+            {/* Time and Memory Limits */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <Label htmlFor="timeLimit">Time Limit (ms)</Label>
+                <Input
+                  id="timeLimit"
+                  type="number"
+                  placeholder="1000"
+                  value={formData.timeLimitMs}
+                  onChange={(e) => setFormData({ ...formData, timeLimitMs: parseInt(e.target.value) || 0 })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="memoryLimit">Memory Limit (MB)</Label>
+                <Input
+                  id="memoryLimit"
+                  type="number"
+                  placeholder="256"
+                  value={formData.memoryLimitMb}
+                  onChange={(e) => setFormData({ ...formData, memoryLimitMb: parseInt(e.target.value) || 0 })}
+                  required
+                />
+              </div>
             </div>
 
             {/* Test Cases */}
@@ -248,8 +265,8 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
           </form>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

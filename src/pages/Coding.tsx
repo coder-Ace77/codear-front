@@ -16,9 +16,9 @@ const Coding = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [code, setCode] = useState<string | "">("");
-  const [problemId, setProblemId] = useState<Number | null>(null); 
-  const [activeTab,setActiveTab] = useState<Tab>('problem');
-  const [submissionId,setSubmissionId] = useState<String | null>(null);
+  const [problemId, setProblemId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('problem');
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -39,21 +39,22 @@ const Coding = () => {
   }, [problem]);
 
 
-  if (loading){return <CodingLoading />;}
-  if (error){return <CodingError error={error} />;}
-  if (!problem){return <CodingProblemNotFound />;}
+  if (loading) { return <CodingLoading />; }
+  if (error) { return <CodingError error={error} />; }
+  if (!problem) { return <CodingProblemNotFound />; }
 
   return (
     <div className="relative flex w-full h-[calc(100vh-4rem)]"> {/* Add relative and full width */}
-      
+
       {/* 2. Add the Sidebar */}
-      <AssistantSidebar 
-        problemStatement={problem.description} // or whatever field holds the text
-        code={code} 
+      <AssistantSidebar
+        problemStatement={problem.description}
+        code={code}
+        problemId={String(problem.id)}
       />
 
       <div className="h-full w-full flex flex-col lg:flex-row gap-4 p-4 transition-all">
-        <ProblemPanel 
+        <ProblemPanel
           problem={problem}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -61,11 +62,11 @@ const Coding = () => {
         />
 
         <div className="lg:w-3/5 h-full">
-          <EditorPanel 
+          <EditorPanel
             code={code}
-            setCode={setCode} 
-            problemId={problemId} 
-            setAcitveTab={setActiveTab} 
+            setCode={setCode}
+            problemId={problemId}
+            setAcitveTab={setActiveTab}
             setSubmissionId={setSubmissionId}
           />
         </div>
