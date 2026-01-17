@@ -48,7 +48,7 @@ const ProblemPanel: React.FC<ProblemPanelProps> = ({ problem, activeTab, setActi
   );
 
   return (
-    <div className="lg:w-2/5 flex flex-col h-full overflow-hidden bg-card border border-border rounded-xl">
+    <div className="w-full lg:w-2/5 flex flex-col h-[500px] lg:h-full shrink-0 overflow-hidden bg-card border border-border rounded-xl">
 
       <div className="flex border-b border-border px-2">
         <TabButton tabId="problem" label="Problem" />

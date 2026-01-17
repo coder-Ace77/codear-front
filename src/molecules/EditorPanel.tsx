@@ -1,4 +1,4 @@
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Play, CheckCircle } from "lucide-react";
 import { Editor } from "@monaco-editor/react";
 import { getButtonClasses } from "@/constants/ButtonVariants";
@@ -7,31 +7,59 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
-const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) => {
-  const [language, setLanguage] = useState("python");
-  const [fontSize, setFontSize] = useState(14);
+const EditorPanel = ({ code, setCode, problemId, setAcitveTab, setSubmissionId }) => {
+  const [language, setLanguage] = useState(() => localStorage.getItem("preferred-language") || "python");
+  const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem("preferred-font-size")) || 14);
   const [output, setOutput] = useState("");
   const [testInput, setTestInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const [isRunningTest,setIsRunningTest] = useState(false);
+  const [isRunningTest, setIsRunningTest] = useState(false);
 
   const intervalRef = useRef(null);
-  
 
-  useEffect(()=>{
-    if(typeof code==='string' && code.length>0){
-      localStorage.setItem("p"+problemId+" "+language,code);
+  // Auto-save code for current language
+  useEffect(() => {
+    if (problemId && typeof code === 'string') {
+      localStorage.setItem(`p${problemId} ${language}`, code);
     }
-  },[code,problemId,language]);
+  }, [code, problemId, language]);
 
-  useEffect(()=>{
-    const savedCode = localStorage.getItem("p"+problemId+" "+language);
-    if(savedCode && savedCode!==code){
-      setCode(savedCode);
+  // Load code when problemId changes (initial load)
+  useEffect(() => {
+    if (problemId) {
+      const savedCode = localStorage.getItem(`p${problemId} ${language}`);
+      if (savedCode) {
+        setCode(savedCode);
+      } else {
+        // Optional: Set default template if no saved code
+        setCode("");
+      }
     }
-  },[problemId,setCode,language]);
+  }, [problemId]); // We typically only want this on mount/problem change, not every language change (handled by handler)
+
+  const handleLanguageChange = (newLanguage: string) => {
+    // 1. Save current code for current language
+    if (problemId) {
+      localStorage.setItem(`p${problemId} ${language}`, code);
+    }
+
+    // 2. Set new language and persist preference
+    setLanguage(newLanguage);
+    localStorage.setItem("preferred-language", newLanguage);
+
+    // 3. Load code for new language
+    if (problemId) {
+      const savedCode = localStorage.getItem(`p${problemId} ${newLanguage}`);
+      setCode(savedCode || "");
+    }
+  };
+
+  const handleFontSizeChange = (newSize: number) => {
+    setFontSize(newSize);
+    localStorage.setItem("preferred-font-size", String(newSize));
+  };
 
 
   const editorLanguage = {
@@ -57,51 +85,51 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
 
       console.error(err);
       toast.error("Error submitting code. Please try again");
-      setIsSubmitting(false); 
+      setIsSubmitting(false);
 
-    } 
+    }
   };
 
-  const handleTestCase = async ()=>{
+  const handleTestCase = async () => {
     try {
       const toastId = toast.loading("Testing code");
       setIsRunningTest(true);
 
-      const {submissionId} = await codingService.runCode(problemId,code,language,testInput);
+      const { submissionId } = await codingService.runCode(problemId, code, language, testInput);
 
       const fetchStatus = async () => {
         try {
           const data = await codingService.getRunStatus(submissionId);
-          if (data.status==="COMPLETED"){
-            toast.success("Test run completed", {id:toastId});
-            clearInterval(intervalRef.current); 
+          if (data.status === "COMPLETED") {
+            toast.success("Test run completed", { id: toastId });
+            clearInterval(intervalRef.current);
             setOutput(data.output);
             setIsRunningTest(false);
           }
         } catch (error) {
           clearInterval(intervalRef.current);
-          toast.error("Error Running tests",{id:toastId});
+          toast.error("Error Running tests", { id: toastId });
         }
       };
       fetchStatus();
-      intervalRef.current = setInterval(fetchStatus,3000); 
+      intervalRef.current = setInterval(fetchStatus, 3000);
       setIsRunningTest(false);
 
     } catch (err) {
       console.error(err);
       toast.error("Error submitting code. Please try again");
-      setIsSubmitting(false); 
+      setIsSubmitting(false);
     }
   }
 
   return (
     <div className="h-full flex flex-col bg-card border border-border rounded-xl overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-3 border-b border-border bg-secondary gap-4 sm:gap-0">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <select
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="w-40 h-9 px-3 rounded-md border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            className="flex-1 sm:flex-none sm:w-40 h-9 px-3 rounded-md border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="javascript">JavaScript</option>
             <option value="python">Python</option>
@@ -112,7 +140,7 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
 
           <select
             value={fontSize}
-            onChange={(e) => setFontSize(Number(e.target.value))}
+            onChange={(e) => handleFontSizeChange(Number(e.target.value))}
             className="w-20 h-9 px-3 rounded-md border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="12">12</option>
@@ -123,7 +151,7 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           <button className={getButtonClasses("secondary")} onClick={handleTestCase} disabled={isRunningTest}>
             <Play className="w-4 h-4 mr-1" />
             Run
@@ -140,7 +168,7 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
         </div>
       </div>
 
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-[400px]">
         <Editor
           height="100%"
           width="100%"
@@ -158,7 +186,7 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
         />
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 p-4">
         <div className="flex-1 h-32 border-t border-border bg-secondary p-4 overflow-y-hidden rounded-md">
           <textarea
             onChange={(e) => setTestInput(e.target.value)}
@@ -176,7 +204,7 @@ const EditorPanel = ({ code, setCode, problemId ,setAcitveTab,setSubmissionId}) 
             className="w-full h-full resize-none bg-background text-foreground text-sm p-2 rounded-md outline-none"
           />
         </div>
-        
+
       </div>
 
     </div>

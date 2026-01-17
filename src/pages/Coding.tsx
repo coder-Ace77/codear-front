@@ -44,7 +44,7 @@ const Coding = () => {
   if (!problem) { return <CodingProblemNotFound />; }
 
   return (
-    <div className="relative flex w-full h-[calc(100vh-4rem)]"> {/* Add relative and full width */}
+    <div className="relative flex w-full h-[calc(100vh-4rem)] overflow-y-auto lg:overflow-hidden bg-background"> {/* Scroll on mobile, fixed on desktop */}
 
       {/* 2. Add the Sidebar */}
       <AssistantSidebar
@@ -53,7 +53,7 @@ const Coding = () => {
         problemId={String(problem.id)}
       />
 
-      <div className="h-full w-full flex flex-col lg:flex-row gap-4 p-4 transition-all">
+      <div className="min-h-full w-full flex flex-col lg:flex-row gap-4 p-4 transition-all">
         <ProblemPanel
           problem={problem}
           activeTab={activeTab}
@@ -61,7 +61,7 @@ const Coding = () => {
           submissionId={submissionId}
         />
 
-        <div className="lg:w-3/5 h-full">
+        <div className="w-full lg:w-3/5 h-[600px] lg:h-full shrink-0">
           <EditorPanel
             code={code}
             setCode={setCode}
