@@ -13,4 +13,5 @@ export interface Submission {
   submittedAt: string; 
   timeTakenMs: number;
   memoryUsed: string;
+  errorLog?: string;
 }

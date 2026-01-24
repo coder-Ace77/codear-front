@@ -12,6 +12,7 @@ import {
   Database,
   FileText,
   CalendarArrowDown,
+  Terminal,
 } from "lucide-react";
 import { getStatusStyles } from "@/constants/subStyles";
 
@@ -19,35 +20,35 @@ import { getStatusStyles } from "@/constants/subStyles";
 export const SubmissionsContent = ({ problemId }: { problemId: number | string }) => {
   const [submissions, setSubmissions] = useState<Submission[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [refresh,setRefreshing] = useState(false);
+  const [refresh, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!problemId) {
-      setSubmissions([]); 
+      setSubmissions([]);
       return;
     }
 
     const fetchSubmissions = async () => {
       setIsLoading(true);
-      setSubmissions(null); 
+      setSubmissions(null);
       try {
-        const response = await apiClient.get(`/problem/submissions/subuser/${problemId}`);        
+        const response = await apiClient.get(`/problem/submissions/subuser/${problemId}`);
         const data: Submission[] = response.data;
         data.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
         setSubmissions(data);
       } catch (e) {
         console.error("Error fetching submissions:", e);
         toast.error("Failed to load submissions.");
-        setSubmissions([]); 
+        setSubmissions([]);
       } finally {
         setIsLoading(false);
       }
     };
     fetchSubmissions();
-  }, [refresh]); 
+  }, [refresh]);
 
   const handleRefresh = () => {
-      setRefreshing(!refresh);
+    setRefreshing(!refresh);
   };
 
   const renderContent = () => {
@@ -76,7 +77,7 @@ export const SubmissionsContent = ({ problemId }: { problemId: number | string }
 
           return (
             <div key={sub.id} className="bg-card border rounded-lg overflow-hidden shadow-sm transition-all hover:shadow-md">
-              
+
               <div className={`p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${bgColor}`}>
                 <div className="flex items-center gap-3">
                   <span className={color}>{icon}</span>
@@ -116,11 +117,41 @@ export const SubmissionsContent = ({ problemId }: { problemId: number | string }
                 </div>
               </div>
 
+              {sub.errorLog ? (
+                <details className="border-t">
+                  <summary className="px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-muted/50 text-sm font-medium text-muted-foreground group">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="w-4 h-4 text-red-500" />
+                      <span className="text-red-500">View Execution Logs</span>
+                    </div>
+                    <ChevronDown className="w-5 h-5 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="bg-gray-950 text-red-400 p-4 font-mono text-xs overflow-x-auto whitespace-pre-wrap border-b border-red-900/20">
+                    {sub.errorLog}
+                  </div>
+                </details>
+              ) : (
+                sub.status === "FAILED" && sub.result && (
+                  <details className="border-t">
+                    <summary className="px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-muted/50 text-sm font-medium text-muted-foreground group">
+                      <div className="flex items-center gap-2">
+                        <Terminal className="w-4 h-4 text-orange-500" />
+                        <span className="text-orange-500">View Failure Details</span>
+                      </div>
+                      <ChevronDown className="w-5 h-5 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="bg-gray-950 text-orange-400 p-4 font-mono text-xs overflow-x-auto whitespace-pre-wrap border-b border-orange-900/20">
+                      {sub.result}
+                    </div>
+                  </details>
+                )
+              )}
+
               <details className="border-t">
                 <summary className="px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-muted/50 text-sm font-medium text-muted-foreground group">
                   <div className="flex items-center gap-2">
-                     <Code className="w-4 h-4" />
-                     <span>View Submitted Code</span>
+                    <Code className="w-4 h-4" />
+                    <span>View Submitted Code</span>
                   </div>
                   <ChevronDown className="w-5 h-5 transition-transform group-open:rotate-180" />
                 </summary>
@@ -141,10 +172,10 @@ export const SubmissionsContent = ({ problemId }: { problemId: number | string }
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
-      
+
       <div className="flex justify-between items-center mb-5">
         <h2 className="text-2xl font-semibold">My Submissions</h2>
-        
+
         <button
           onClick={handleRefresh}
           className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
