@@ -41,7 +41,7 @@ const EditorialTab: React.FC<EditorialTabProps> = ({ problemId }) => {
             setIsComposing(false);
             setNewTitle("");
             setNewContent("");
-            fetchEditorials(); // Reload list
+            fetchEditorials(); 
         } catch (err) {
             console.error("Failed to submit editorial", err);
         } finally {

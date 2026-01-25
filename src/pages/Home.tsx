@@ -83,9 +83,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#1e1e1e] overflow-hidden relative">
-      {/* Code Background Layer */}
       <div className="absolute inset-0 opacity-40 overflow-hidden pointer-events-none select-none filter blur-[1px]">
-        {/* Main Typing Block */}
         <div className="transform -rotate-12 scale-110 translate-x-[-10%] translate-y-[-10%] transition-all duration-300">
           <SyntaxHighlighter
             language="javascript"
@@ -104,7 +102,6 @@ const Home = () => {
           </SyntaxHighlighter>
         </div>
 
-        {/* Extra Background Block 1 */}
         <div className="absolute top-[-10%] right-[-10%] transform rotate-12 scale-90 opacity-20 hidden md:block">
           <SyntaxHighlighter
             language="typescript"
@@ -115,7 +112,6 @@ const Home = () => {
           </SyntaxHighlighter>
         </div>
 
-        {/* Extra Background Block 2 */}
         <div className="absolute bottom-[-20%] left-[-10%] transform -rotate-6 scale-75 opacity-20 hidden md:block">
           <SyntaxHighlighter
             language="javascript"
@@ -127,14 +123,12 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Floating Syntax Elements (Decoration) */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 md:left-20 text-accent/20 text-4xl md:text-6xl font-mono animate-bounce delay-700">{`{}`}</div>
         <div className="absolute bottom-40 right-10 md:right-40 text-primary/20 text-4xl md:text-6xl font-mono animate-bounce delay-1000">{`</>`}</div>
         <div className="absolute top-1/2 right-4 md:right-20 text-success/20 text-2xl md:text-4xl font-mono animate-pulse">{`[]`}</div>
       </div>
 
-      {/* Main Content with Glassmorphism */}
       <div className="relative z-10 text-center p-6 md:p-12 rounded-3xl bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl mx-4">
         <h1
           className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-4"
@@ -156,7 +150,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Scanline Effect */}
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1))] bg-[length:100%_4px] pointer-events-none opacity-20" />
     </div>
   );

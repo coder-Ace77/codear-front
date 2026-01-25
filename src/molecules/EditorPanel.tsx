@@ -19,37 +19,31 @@ const EditorPanel = ({ code, setCode, problemId, setAcitveTab, setSubmissionId }
 
   const intervalRef = useRef(null);
 
-  // Auto-save code for current language
   useEffect(() => {
     if (problemId && typeof code === 'string') {
       localStorage.setItem(`p${problemId} ${language}`, code);
     }
   }, [code, problemId, language]);
 
-  // Load code when problemId changes (initial load)
   useEffect(() => {
     if (problemId) {
       const savedCode = localStorage.getItem(`p${problemId} ${language}`);
       if (savedCode) {
         setCode(savedCode);
       } else {
-        // Optional: Set default template if no saved code
         setCode("");
       }
     }
-  }, [problemId]); // We typically only want this on mount/problem change, not every language change (handled by handler)
+  }, [problemId]); 
 
   const handleLanguageChange = (newLanguage: string) => {
-    // 1. Save current code for current language
     if (problemId) {
       localStorage.setItem(`p${problemId} ${language}`, code);
     }
 
-    // 2. Set new language and persist preference
     setLanguage(newLanguage);
     localStorage.setItem("preferred-language", newLanguage);
 
-    // 3. Load code for new language
     if (problemId) {
       const savedCode = localStorage.getItem(`p${problemId} ${newLanguage}`);
       setCode(savedCode || "");

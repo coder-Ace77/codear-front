@@ -16,53 +16,6 @@ export const fetchGrandTotal = async (setGrandTotalProblems,setAvailableTags) =>
     }
 };
 
-// export const fetchProblems = async (
-//     setLoading,
-//     setError,
-//     currentPage,
-//     searchQuery,
-//     selectedDifficulty,
-//     sortBy,
-//     selectedTag,
-//     setProblems,
-//     setTotalPages,
-//     setTotalProblems
-// ) => {
-//       setLoading(true);
-//       setError(null);
-      
-//       try {
-//         const params = new URLSearchParams();
-//         params.append("page", String(currentPage));
-//         params.append("limit", String(ITEMS_PER_PAGE));
-//         if (searchQuery) params.append("search", searchQuery);
-//         if (selectedDifficulty !== "all") params.append("difficulty", selectedDifficulty);
-//         if (sortBy) params.append("sort", sortBy);
-//         if (selectedTag) params.append("tag", selectedTag);
-
-//         const response = await apiClient(`/problem/problems?${params.toString()}`);
-
-//         const data: ProblemSummary[] = await response.data;
-
-//         console.log(response.data);
-
-//         setProblems(data || []);
-//         setTotalProblems(data.length || 0);
-//         const total_pages = data.length / ITEMS_PER_PAGE;
-//         setTotalPages(total_pages || 0);
-
-//       } catch (err) {
-//         console.error("Fetch error:", err);
-//         setError("Failed to fetch problems. Please try again later.");
-//         setProblems([]);
-//         setTotalProblems(0);
-//         setTotalPages(0);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-
 export const fetchProblems = async ({
   page,
   search,
@@ -83,14 +36,14 @@ export const fetchProblems = async ({
   try {
     console.log("fetch Problem called..");
     const params: any = {
-      page: page - 1, // backend is 0-indexed
+      page: page - 1, 
       size: 10,
       sortBy,
     };
 
     if (search) params.search = search;
     if (difficulty !== "all") params.difficulty = difficulty;
-    if (tag) params.tags = [tag]; // ✅ plural, backend expects List<String>
+    if (tag) params.tags = [tag]; 
 
     console.log("params", params);
 

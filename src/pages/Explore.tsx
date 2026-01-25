@@ -46,9 +46,9 @@ const Explore = () => {
           setLoading(false);
         },
       });
-    }, 500); // 🕒 debounce delay in ms (adjust to taste)
+    }, 500); 
 
-    return () => clearTimeout(handler); // cleanup on every dependency change
+    return () => clearTimeout(handler); 
   }, [currentPage, searchQuery, selectedDifficulty, sortBy, selectedTag]);
 
   useEffect(() => {
@@ -56,7 +56,6 @@ const Explore = () => {
   } , [])
 
   
-  // Reset page to 1 whenever filter/search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedDifficulty, sortBy, selectedTag]);
@@ -64,10 +63,8 @@ const Explore = () => {
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-4">
-        {/* Header */}
         <ExplorePageHeader grandTotalProblems={grandTotalProblems} />
 
-        {/* Filters / Search / Sorting */}
         <ExplorePageMenuSection
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -79,20 +76,15 @@ const Explore = () => {
           selectedTag={selectedTag}
           setSelectedTag={setSelectedTag}
         />
-
-        {/* Count display */}
         <div className="mb-4 text-sm text-muted-foreground">
           Showing {problems.length} of {totalProblems} problems
         </div>
 
-        {/* Problem list */}
         <ExplorePageProblemSection
           loading={loading}
           problemsummary={problems}
           error={error}
         />
-
-        {/* Pagination */}
         {!loading && !error && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}

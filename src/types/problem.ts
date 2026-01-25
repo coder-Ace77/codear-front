@@ -1,4 +1,3 @@
-// This should match your TestCase entity
 export interface TestCase {
   id: number;
   input: string;
@@ -6,7 +5,6 @@ export interface TestCase {
   isSample: boolean;
 }
 
-// This matches your Problem entity from Java
 export interface Problem {
   id: number;
   title: string;
@@ -18,5 +16,5 @@ export interface Problem {
   tags: string[];
   timeLimitMs: number;
   memoryLimitMb: number;
-  testCases: TestCase[]; // We need this to find the sample case
+  testCases: TestCase[]; 
 }
