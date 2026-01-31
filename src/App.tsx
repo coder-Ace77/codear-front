@@ -15,6 +15,8 @@ import NotFound from "./pages/NotFound";
 import SubmissionResult from "./pages/SubmissionResult";
 import ToastProvider from "./components/providers/ToastProvider";
 
+import BackendHealthCheck from "@/components/ui/BackendHealthCheck";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -24,6 +26,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <div className="min-h-screen bg-background text-foreground">
+          <BackendHealthCheck />
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -37,7 +40,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-        <ToastProvider/>
+        <ToastProvider />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
