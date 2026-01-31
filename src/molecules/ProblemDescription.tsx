@@ -8,7 +8,6 @@ interface ProblemDescriptionProps {
 
 const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem }) => {
   const difficultyVariant = problem.difficulty.toLowerCase() as "easy" | "medium" | "hard";
-  // Find explicitly marked sample, or fallback to the first one
   const sampleTestCase = problem.testCases?.find(tc => tc.isSample) || problem.testCases?.[0];
   const constraintItems = problem.constraints
     ? problem.constraints.split('\n').filter(line => line.trim() !== '')

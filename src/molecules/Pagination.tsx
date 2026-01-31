@@ -18,7 +18,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
     return false;
   });
 
-  // This function adds ellipsis where needed
   const getVisiblePages = () => {
     if (totalPages <= 7) {
       return pages;

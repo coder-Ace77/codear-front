@@ -28,8 +28,7 @@ const Explore = () => {
   useEffect(() => {
     setLoading(true);
 
-    const handler = setTimeout(() => {
-      fetchProblems({
+    fetchProblems({
         page: currentPage,
         search: searchQuery,
         difficulty: selectedDifficulty,
@@ -46,9 +45,6 @@ const Explore = () => {
           setLoading(false);
         },
       });
-    }, 500); 
-
-    return () => clearTimeout(handler); 
   }, [currentPage, searchQuery, selectedDifficulty, sortBy, selectedTag]);
 
   useEffect(() => {

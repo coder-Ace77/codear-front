@@ -4,16 +4,16 @@ import apiClient from "@/lib/apiClient";
 import type { TagsAndCount } from "@/types/TagsAndCount";
 import { ProblemSummary } from "@/constants/mockData";
 
-export const fetchGrandTotal = async (setGrandTotalProblems,setAvailableTags) => {
-    try {
-        const response = await apiClient("/problem/problemCntAndTags");
-        const data: TagsAndCount = await response.data;
-        setGrandTotalProblems(data.count || 0);
-        setAvailableTags(data.tags || []);
-    } catch (err) {
-        console.error("Failed to fetch grand total:", err);
-        setGrandTotalProblems(0);
-    }
+export const fetchGrandTotal = async (setGrandTotalProblems, setAvailableTags) => {
+  try {
+    const response = await apiClient("/problem/problemCntAndTags");
+    const data: TagsAndCount = await response.data;
+    setGrandTotalProblems(data.count || 0);
+    setAvailableTags(data.tags || []);
+  } catch (err) {
+    console.error("Failed to fetch grand total:", err);
+    setGrandTotalProblems(0);
+  }
 };
 
 export const fetchProblems = async ({
@@ -36,20 +36,20 @@ export const fetchProblems = async ({
   try {
     console.log("fetch Problem called..");
     const params: any = {
-      page: page - 1, 
+      page: page - 1,
       size: 10,
       sortBy,
     };
 
     if (search) params.search = search;
     if (difficulty !== "all") params.difficulty = difficulty;
-    if (tag) params.tags = [tag]; 
+    if (tag) params.tags = [tag];
 
     console.log("params", params);
 
     const { data } = await apiClient(`problem/search`, { params });
 
-    console.log("data " , data);
+    console.log("data ", data);
 
     onSuccess({
       problems: data.content || [],
@@ -63,3 +63,13 @@ export const fetchProblems = async ({
 };
 
 
+
+export const deleteProblem = async (id: number) => {
+  try {
+    await apiClient.delete(`/problem/${id}`);
+    return true;
+  } catch (error) {
+    console.error("Failed to delete problem:", error);
+    throw error;
+  }
+};
