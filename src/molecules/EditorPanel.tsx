@@ -34,7 +34,7 @@ const EditorPanel = ({ code, setCode, problemId, setAcitveTab, setSubmissionId }
         setCode("");
       }
     }
-  }, [problemId]); 
+  }, [problemId]);
 
   const handleLanguageChange = (newLanguage: string) => {
     if (problemId) {
@@ -57,11 +57,8 @@ const EditorPanel = ({ code, setCode, problemId, setAcitveTab, setSubmissionId }
 
 
   const editorLanguage = {
-    javascript: "javascript",
     python: "python",
-    java: "java",
     cpp: "cpp",
-    go: "go",
   }[language];
 
   const handleSubmit = async () => {
@@ -125,11 +122,8 @@ const EditorPanel = ({ code, setCode, problemId, setAcitveTab, setSubmissionId }
             onChange={(e) => handleLanguageChange(e.target.value)}
             className="flex-1 sm:flex-none sm:w-40 h-9 px-3 rounded-md border border-border bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="javascript">JavaScript</option>
             <option value="python">Python</option>
-            <option value="java">Java</option>
             <option value="cpp">C++</option>
-            <option value="go">Go</option>
           </select>
 
           <select

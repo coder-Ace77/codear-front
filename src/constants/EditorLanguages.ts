@@ -1,10 +1,7 @@
 
-export const getLangOptions = (language)=>{
-    return {
-    javascript: "javascript",
+export const getLangOptions = (language) => {
+  return {
     python: "python",
-    java: "java",
     cpp: "cpp",
-    go: "go",
   }[language];
 }
