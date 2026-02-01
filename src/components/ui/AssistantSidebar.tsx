@@ -24,7 +24,9 @@ const AssistantSidebar = ({ problemStatement, code, problemId }: AssistantSideba
 
   useEffect(() => {
     const fetchHistory = async () => {
-      if (!problemId) return;
+      // Lazy load: only fetch if open and problemId exists
+      if (!problemId || !isOpen) return;
+
       try {
         const history = await aiService.getChatHistory(problemId);
         if (Array.isArray(history)) {
@@ -38,7 +40,8 @@ const AssistantSidebar = ({ problemStatement, code, problemId }: AssistantSideba
       }
     };
     fetchHistory();
-  }, [problemId]);
+    // Depend on isOpen to trigger fetch when sidebar opens
+  }, [problemId, isOpen]);
 
   const handleSendMessage = async () => {
     if (!message.trim() || isLoading) return;
