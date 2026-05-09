@@ -37,7 +37,7 @@ export const fetchProblems = async ({
     console.log("fetch Problem called..");
     const params: any = {
       page: page - 1,
-      size: 10,
+      size: ITEMS_PER_PAGE,
       sortBy,
     };
 
