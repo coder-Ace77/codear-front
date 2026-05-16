@@ -19,7 +19,7 @@ const BackendHealthCheck = () => {
         const checkHealth = async () => {
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 1000); // 1s timeout
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 1s timeout
 
                 await apiClient.get("/user/health", {
                     signal: controller.signal,
